@@ -16,7 +16,8 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "test": "jest"
+    "test": "npm run tsc -- --noEmit && jest",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git",
