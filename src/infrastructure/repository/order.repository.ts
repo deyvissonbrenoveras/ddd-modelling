@@ -25,7 +25,64 @@ export default class OrderRepository implements OrdeRepositoryInterface {
     );
   }
   async update(entity: Order): Promise<void> {
-    throw new Error("Method not implemented.");
+    const sequelize = OrderModel.sequelize;
+    await sequelize.transaction(async (t) => {
+      await OrderItemModel.destroy({
+        where: { order_id: entity.id },
+        transaction: t,
+      });
+      const items = entity.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        product_id: item.productId,
+        quantity: item.quantity,
+        order_id: entity.id,
+      }));
+      await OrderItemModel.bulkCreate(items, { transaction: t });
+      await OrderModel.update(
+        { total: entity.total() },
+        { where: { id: entity.id }, transaction: t }
+      );
+    });
+
+    // const orderToUpdate = await OrderModel.findByPk(entity.id, {
+    //   include: [{ model: OrderItemModel }],
+    // });
+    // orderToUpdate.customer_id = entity.customerId;
+    // orderToUpdate.total = entity.total();
+    // orderToUpdate.items = entity.items.map(
+    //   (item) =>
+    //     new OrderItemModel({
+    //       id: item.id,
+    //       name: item.name,
+    //       price: item.price,
+    //       product_id: item.productId,
+    //       quantity: item.quantity,
+    //       order_id: entity.id,
+    //     })
+    // );
+    // await orderToUpdate.save();
+
+    // await OrderModel.update(
+    //   {
+    //     id: entity.id,
+    //     customer_id: entity.customerId,
+    //     total: entity.total(),
+    //     items: entity.items.map((item) => ({
+    //       id: item.id,
+    //       name: item.name,
+    //       price: item.price,
+    //       product_id: item.productId,
+    //       quantity: item.quantity,
+    //     })),
+    //   },
+    //   {
+    //     where: {
+    //       id: entity.id,
+    //     },
+    //   }
+    // );
   }
   async find(id: string): Promise<Order> {
     const orderModel = await OrderModel.findOne({
@@ -48,6 +105,23 @@ export default class OrderRepository implements OrdeRepositoryInterface {
     );
   }
   async findAll(): Promise<Order[]> {
-    throw new Error("Method not implemented.");
+    const orderModels = await OrderModel.findAll({ include: "items" });
+    return orderModels.map(
+      (orderModel) =>
+        new Order(
+          orderModel.id,
+          orderModel.customer_id,
+          orderModel.items.map(
+            (item) =>
+              new OrderItem(
+                item.id,
+                item.name,
+                item.price,
+                item.product_id,
+                item.quantity
+              )
+          )
+        )
+    );
   }
 }
