@@ -232,5 +232,24 @@ describe("Order repository test", () => {
         product_id: item.productId,
       })),
     });
+
+    expect(orderModel2.toJSON().items).toStrictEqual([
+      {
+        id: orderItem.id,
+        name: orderItem.name,
+        price: orderItem.price,
+        quantity: orderItem.quantity,
+        order_id: order.id,
+        product_id: orderItem.productId,
+      },
+      {
+        id: orderItem2.id,
+        name: orderItem2.name,
+        price: orderItem2.price,
+        quantity: orderItem2.quantity,
+        order_id: order.id,
+        product_id: orderItem2.productId,
+      },
+    ]);
   });
 });
