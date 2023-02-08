@@ -1,8 +1,7 @@
-import Address from "../../entity/address";
-import Customer from "../../entity/customer";
-import EventDispatcher from "../@shared/event-dispatcher";
-import CustomerAddressChangedEvent from "./customer-address-changed.event";
-import CustomerAddressChangedHandler from "./handler/customer-address-changed.handle";
+import EventDispatcher from "../@shared/event/event-dispatcher";
+import Customer from "./entity/customer";
+import CustomerAddressChangedHandler from "./event/handler/customer-address-changed.handle";
+import Address from "./value-object/address";
 
 describe("customer address changed event tests", () => {
   it("should notify when address is changed", () => {

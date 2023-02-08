@@ -1,4 +1,4 @@
-import EventDispatcher from "../@shared/event-dispatcher";
+import EventDispatcher from "../../@shared/event/event-dispatcher";
 import CustomerCreatedEvent from "./customer-created.event";
 import CustomerCreatedSecondaryHandler from "./handler/customer-created-secondary.handler";
 import CustomerCreatedHandler from "./handler/customer-created.handler";
